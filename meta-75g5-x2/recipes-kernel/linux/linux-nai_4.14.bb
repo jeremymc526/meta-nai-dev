@@ -45,9 +45,7 @@ SRCREV_machine = "${SRCREV}"
 #############
 
 do_configure_append() {
-	bbdebug 2 "Running do config APPEND()! "
-	bberror " Printing this to make sure you see this!!! "
-	bberror " Applying various kernel fragments using kernel merge_config.sh script "
+	bbdebug 3 "Running do config APPEND()! "
 	#this is a better way to do it.  But really Yocto should be managing all this. 
 	#${S}/scripts/kconfig/merge_config.sh -m -O ${WORKDIR}/build ${WORKDIR}/build/.config ${WORKDIR}/*.cfg
 
