@@ -1,0 +1,57 @@
+FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
+
+SECTION = "u-boot"
+DESCRIPTION = "NAI U-Boot source for NAI Industires"
+LICENSE = "GPLv2"
+
+require recipes-bsp/u-boot/u-boot.inc
+DEPENDS += "rpi-mkimage-native"
+PROVIDES += "u-boot"
+RPROVIDES_${PN} = "u-boot"
+
+
+#SRCREV = "${AUTOREV}" ## this builds the latest version or you use HASH for specific version
+SRCREV = "586d7124ab6d66b21e2dbc9db07d97dd7c0e7621"
+SRCBRANCH = "75g5-x2"
+KERNEL_SRC ?= "git://github.com/jeremymc526/BouncyCastle.git;protocol=git"
+SRC_URI += "${KERNEL_SRC};branch=${SRCBRANCH} "
+
+S = "${WORKDIR}/git"
+
+SRC_URI_append = "\
+        file://defconfig.cfg \
+        file://fragment.cfg \
+        "
+COMPATIBLE_MACHINE_75g5-x2 = "(75g5-x2)"
+
+SRCREV_machine = "${SRCREV}"
+
+
+
+##############
+### THIS SUCKS!  NOTE: Had to do this for the kernel, assuming I have to do this for u-boot too!
+### Kernel config fragments dont seem to work for me.
+### Not sure what the heck is going on, but here is another way to
+###  get kernel config fragments to apply
+#############
+
+do_configure_append() {
+        bbdebug 3 "Running do config APPEND()! "
+        #this is a better way to do it.  But really Yocto should be managing all this.
+        #${S}/scripts/kconfig/merge_config.sh -m -O ${WORKDIR}/build ${WORKDIR}/build/.config ${WORKDIR}/*.cfg
+
+        #This method works just fine!
+        bbdebug 1 "Applying user specified configs"
+        cat ${WORKDIR}/*.cfg >> ${B}/.config
+}
+
+
+####################
+# make_u_boot_spl_image() {}
+#
+# do_deploy() {}
+#
+# ##################
+#
+
+
