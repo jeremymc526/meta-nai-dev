@@ -1,0 +1,56 @@
+===============================================================================
+ReleaseNotes for MBCore
+/*
+ * #define BUILD_REVISION "000004.000000"   01/08/2019  MLarkin      Port to new Source Tree and nailib 2.x
+ * #define BUILD_REVISION "000004.000002"   05/07/2019  MLarkin      Prep for May14th release
+ * #define BUILD_REVISION "000004.000003"   05/08/2019  MLarkin      More Prep for May14th release
+ * #define BUILD_REVISION "000004.000004"   05/14/2019  MLarkin      Fixup naiMBEEPROMUtil
+ * #define BUILD_REVISION "000004.000005"   05/15/2019  MLarkin      Fix MotherboardAssemblySerialNo
+ * #define BUILD_REVISION "000004.000006"   09/28/2019  MLarkin      Implement QSPIParams for PetaLinux
+ * #define BUILD_REVISION "000004.000007"   10/24/2019  MLarkin      - More MBCommon population. Added missing Linux Kernel, DTB, RootFS verion info
+ *                                                                   - Added more OrigTempVolt registers
+ *                                                                   - Added DisplayInitInfo for QSPIParams
+ */
+ * #define BUILD_REVISION "000004.000008"   11/12/2019  MLarkin      - Ported support for ConfigMode Slave boards via SHRAM
+ *                                                                   - Added MBTVCSensor Summ
+ * #define BUILD_REVISION "000004.000009"   01/27/2020  MLarkin      - Added PlatformEvents, EventRingBuffer, and FRAMEventRingBuffer, Action Commands for FRAM access
+ * #define BUILD_REVISION "000004.000010"   02/06/2020  MLarkin      - Added SBIT and MbEEPROM CRC Check
+ * #define BUILD_REVISION "000004.000011"   02/11/2020  MLarkin      - Fixed PlatformEventMonitor ReadPlatfromEvents Scratchpad overflow
+ * #define BUILD_REVISION "000004.000012"   02/13/2020  MLarkin      - Re-orgranized MB PS Sensors to match Module PS Sensor order
+ * #define BUILD_REVISION "000004.000013"   02/25/2020  MLarkin      - Completed Action Commands Get/Validate/Read MBEERPOM CRC.
+ */
+#define BUILD_REVISION "000004.000014"   /* 03/11/2020  MLarkin      - Added more display parameter options to initPlatform().
+                                                                     - Ported naiModEEPROmUtil.
+                                                                     - Added support for 68DT1.
+ *                                                                   - Integrated new naibsp_sys library
+ * #define BUILD_REVISION "000004.000015"   03/14/2020  MLarkin      - Fixed naiMBEEPROMUtil MiscSettings to parse input string as 16-bit hex. Add Dec and Hex input handlers
+ *                                                                   - Also updated assoc help text.
+ *                                                                   - Enabled NAIBSP_CONFIG_PERIPHERALS_ANALOG to get MB System Temps/Volts Sensor working again.
+ *                                                                   - Fixed EtherTCP crash issue.
+ * #define BUILD_REVISION "000004.000016"   03/17/2020  MLarkin      - Merge from VxWorks updates for the following:
+ *                                                                        Handle Offboard Module Capabilities
+ *                                                                        Handle Module not communicating
+ *                                                                        Partial implements of TDRs (not working for Linux yet)
+ *                                                                        Added NoReply option for WriteRegs, WriteBlock, WriteZBlock
+ *                                                                         These are now globals:
+ *                                                                            execution_context_t g_ExecContext;
+ *                                                                            g_ConfigInfo
+ *                                                                            g_AryModuleDefinitions[MAX_MODULE_COUNT]
+ *                                                                            g_aryPCISlaves[BACKPLANE_MAX_CARDS]
+ *                                                                            g_AryPCIModuleDefinitions[BACKPLANE_MAX_CARDS][MAX_MODULE_COUNT]
+ * #define BUILD_REVISION "000004.000017"   03/18/2020  MLarkin      - More fixes to address Module down state.
+ * #define BUILD_REVISION "000004.000018"   03/18/2020  MLarkin      - More Module PCI Tweaks.
+ * #define BUILD_REVISION "00004.00019"     03/19/2020  MLarkin      - Moved PCI ModuleNum calculation to own function -  mbcore_Module_Read32() no longer accepts -1 ModuleNum
+ * #define BUILD_REVISION "00004.00020"     04/02/2020  MLarkin      - Implemented proper getModuleStatus() for Linux, DEOS, VxWorks. Previous version was
+ *                                                                     hardcoded to return 0x0007 (all 3 Modules ready). Now properly checks Module status
+ * #define BUILD_REVISION "00004.00021"     04/23/2020  MLarkin      - ModuleOffset adjustment back out again. Not fixed to always subtract 0x4000 - Size of MBCommon
+ * #define BUILD_REVISION "00004.00022"     05/06/2020  MLarkin      - Added new bUseSERDESBlocksIfSupported flag to provide optional use of SERDES Blocks - not all Modules correctly support SERDES Blocks
+                                                                     - Also turned off EventMonitor and ActionCommandMonitor for general release
+ * #define BUILD_REVISION "00004.00023"    05/20/2020  MLarkin       - Fixed FileInfo MBCore month calculation
+ * #define BUILD_REVISION "00004.00024"    05/27/2020  MLarkin      - Added support for 68DT1
+ * #define BUILD_REVISION "00004.00025"    08/07/2020  MLarkin      - Lots of cleanup as per LC spreadsheet - Candidate for LC MB SW Release #7
+ * #define BUILD_REVISION "00004.00026"    09/15/2020  MLarkin      - Implemented Monitor State Machines
+ * #define BUILD_REVISION "00004.00027"    11/11/2020  MLarkin      - Lots of updates since 4.26 */
+#define BUILD_REVISION "00004.00028"    /* 11/19/2020  MLarkin      - Add support for 2018.2 Zynq */
+==============================================================================
+

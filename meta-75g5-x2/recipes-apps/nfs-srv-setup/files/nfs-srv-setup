@@ -1,0 +1,46 @@
+#!/bin/sh
+
+#The following command will disable the write protect on SATA0.
+#This is required in order for the IP address updates to be persistent after a power cycle.
+memtool -32 43c10094=0
+
+# Set NFS server IP based on real network configuration (detail is mentioned in man ifconfig).
+# In here 192.168.100.45 is an example. The user will set this IP address based on their network configuration.
+ifconfig eth0 down;ifconfig eth0 192.168.100.45 netmask 255.255.255.0 up
+
+# set the second Ethernet port eth1 up
+ifup eth1
+ifconfig eth1 192.168.200.45 netmask 255.255.255.0 up
+
+# Create the directory $MNT_SATA_DIR to hold the context in SATA module.
+MNT_SATA_DIR=/sata1
+if [ ! -d $MNT_SATA_DIR ]
+then
+  mkdir -m 777 $MNT_SATA_DIR
+  chmod 777 $MNT_SATA_DIR
+fi
+
+# If onboard SATA exists, SATA module handled by device file /dev/sdb1 is mounted to directory $MNT_SATA_DIR(detail is mentioned in man mount).
+mount /dev/sdb1 $MNT_SATA_DIR > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+  # There is no onboard SATA, SATA module handled by device file /dev/sda1 is mounted to directory $MNT_SATA_DIR
+  mount /dev/sda1 $MNT_SATA_DIR
+fi
+
+#Generate the system file /etc/exports(detail is mentioned in man exports).
+#Just Create once as an example. The user will set the IP address(s) based on their network configuration,
+#Context modified by user will NOT be over written.
+FILE_ETC_EXPORTS=/etc/exports
+if [ ! -f $FILE_ETC_EXPORTS ]
+then
+cat <<__ENDIF >$FILE_ETC_EXPORTS
+/sata1 192.168.100.12(rw,sync,fsid=1,no_root_squash,no_subtree_check)
+/sata1 192.168.100.14(rw,sync,fsid=1,no_root_squash,no_subtree_check)
+/sata1 192.168.100.22(rw,sync,fsid=1,no_root_squash,no_subtree_check)
+/sata1 192.168.100.24(rw,sync,fsid=1,no_root_squash,no_subtree_check)
+/sata1 192.168.100.40(rw,sync,fsid=1,no_root_squash,no_subtree_check)
+__ENDIF
+sync
+fi
+#Maintain table of exported NFS file systems(detail is mentioned in man exportfs)
+exportfs -va
