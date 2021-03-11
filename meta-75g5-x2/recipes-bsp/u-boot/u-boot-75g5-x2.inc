@@ -1,8 +1,8 @@
 DESCRIPTION = "U-boot bootloader for Naii socfpga"
 HOMEPAGE = "http://www.naii.com/"
 SECTION = "bootloaders"
-PROVIDES += " virtual/bootloader u-boot"
-PROVIDES += " u-boot-naii"
+PROVIDES = "virtual/bootloader"
+#PROVIDES = " u-boot-75g5-x2"
 
 inherit uboot-config deploy
 require recipes-bsp/u-boot/u-boot.inc

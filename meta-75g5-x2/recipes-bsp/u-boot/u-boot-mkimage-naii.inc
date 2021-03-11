@@ -3,7 +3,7 @@ DESCRIPTION = "U-boot bootloader mkimage tool"
 HOMEPAGE = "http://www.denx.de/wiki/U-Boot/WebHome"
 LICENSE = "GPLv2+"
 SECTION = "bootloader"
-PROVIDES+=" u-boot-mkimage"
+PROVIDES +=" u-boot-mkimage"
 PR = "r0"
 
 SRCREV = "586d7124ab6d66b21e2dbc9db07d97dd7c0e7621"
