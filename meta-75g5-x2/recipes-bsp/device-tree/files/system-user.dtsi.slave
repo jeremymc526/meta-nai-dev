@@ -1,0 +1,204 @@
+/include/ "system-conf.dtsi"
+/ {
+/*
+     iprop_ahci_0: iprop-ahci@43c20000  //SATA port 0
+     {
+        compatible = "generic-ahci";
+        interrupt-parent = <&intc>;     //calling the provider node. needed
+        interrupts = <0 35 4>;
+        reg = <0x43c20000 0x10000>;
+     };
+
+     iprop_ahci_1: iprop-ahci@43c30000  //SATA port 1
+     {
+        compatible = "generic-ahci";
+        interrupt-parent = <&intc>;     //calling the provider node. needed
+        interrupts = <0 52 4>;
+        reg = <0x43c30000 0x10000>;
+     };
+*/
+     /*SATA 0, need FPGA_X2_75G5_SATA_MOD_D_00_00003.00004_20190829_113247.bit{.bin} and
+                    HDF_X2_75G5_SATA_MOD_D_00_00003.00004_20190829_113247.hdf,
+               or
+                    FPGA_X2_75G5_D_00_00005.00001_20200501_143043.bit{.bin} and
+                    HDF_X2_75G5_D_00_00005.00001_20200501_143043.hdf
+      */
+
+     iprop_ahci_0: iprop-ahci@43c20000
+     {
+        compatible = "IntelliProp,iprop-ahci-1.0";
+        interrupt-parent = <&intc>;
+        interrupts = <0 35 4>;
+        reg = <0x43c20000 0x10000>;
+        IntelliProp,addr-pipe-depth = <0x1>;
+        IntelliProp,dphase-timeout = <0x8>;
+        IntelliProp,length-width = <0xc>;
+        IntelliProp,max-burst-len = <0x100>;
+        IntelliProp,native-data-width = <0x40>;
+        IntelliProp,num-mem = <0x1>;
+        IntelliProp,num-reg = <0x0>;
+        IntelliProp,s-axi-min-size = <0x000001FF>;
+        IntelliProp,slv-awidth = <0x20>;
+        IntelliProp,slv-dwidth = <0x20>;
+        IntelliProp,use-wstrb = <0x0>;
+     };
+
+     /*SATA 1, need FPGA_X2_75G5_SATA_MOD_D_00_00003.00004_20190829_113247.bit{.bin} and
+                    HDF_X2_75G5_SATA_MOD_D_00_00003.00004_20190829_113247.hdf,
+      otherwise, kernel panic during board booting. */
+/*
+     iprop_ahci_1: iprop-ahci@43c30000
+     {
+        compatible = "IntelliProp,iprop-ahci-1.0";
+        interrupt-parent = <&intc>;
+        interrupts = <0 52 4>;
+        reg = <0x43c30000 0x10000>;
+        IntelliProp,addr-pipe-depth = <0x1>;
+        IntelliProp,dphase-timeout = <0x8>;
+        IntelliProp,length-width = <0xc>;
+        IntelliProp,max-burst-len = <0x100>;
+        IntelliProp,native-data-width = <0x40>;
+        IntelliProp,num-mem = <0x1>;
+        IntelliProp,num-reg = <0x0>;
+        IntelliProp,s-axi-min-size = <0x000001FF>;
+        IntelliProp,slv-awidth = <0x20>;
+        IntelliProp,slv-dwidth = <0x20>;
+        IntelliProp,use-wstrb = <0x0>;
+     };
+*/
+
+     /*shared memory*/
+     nai-ep-shrm
+     {
+        compatible = "nai,nai-ep-shrm-v0.1";
+        #address-cells = <1>;
+        #size-cells = <1>;
+        interrupts = <0 31 4>;
+        interrupt-parent = <&intc>;
+        ack-irq-steer =  /bits/ 8 <0x06>; /*0x01 = VME 0x05 = PCIe 0x06 = cPCI*/
+        ranges;
+        vme_cpci_ddr_base: vme_cpci_ddr_base@0x43C10018
+        {
+           label = "vme_cpci_ddr_base";
+           reg = <0x43C10018 0x8>; 
+        };
+        fpga_irq_clear_reg: fpga_irq_clear_reg@0x43C1007C
+        {
+           label = "fpga_irq_clear_reg";
+           reg = <0x43C1007C 0x4>; 
+        };
+        fpga_mod7_vec_addr: fpga_mod7_vec_addr@43C41100
+        {
+           label = "fpga_mod7_vec_addr";
+           reg = <0x43C41100 0x4>; 
+        };
+        fpga_mod7_steer_addr: fpga_mod7_steer_addr@43C41200
+        {
+           label = "fpga_mod7_steer_addr";
+           reg = <0x43C41200 0x4>; 
+        };
+        fpga_mod7_ack_irq: fpga_mod7_ack_irq@0x43C1000C
+        {
+           label = "fpga_mod7_ack_irq";
+           reg = <0x43C1000C 0x4>; 
+        };
+     };
+};
+
+&qspi {
+   #address-cells = <1>;
+   #size-cells = <0>;
+   flash0: flash@0 {
+      compatible = "micron,n25q256a13","jedec,spi-nor";
+      reg = <0x0>;
+      #address-cells = <1>;
+      #size-cells = <1>;
+      spi-max-frequency = <50000000>;
+      /delete-node/ partition@qspi-fsbl-uboot;
+      /delete-node/ partition@qspi-linux;
+      /delete-node/ partition@qspi-device-tree;
+      /delete-node/ partition@qspi-rootfs;
+      /delete-node/ partition@qspi-bitstream;
+      /delete-node/ partition@free;
+      /delete-node/ partition@bootroom;
+      /delete-node/ partition@bootromenv;
+      partition@bootheader {
+             label = "bootheader";
+             reg = <0x00000000 0x00020000>;
+      };
+      partition@fsbl {
+             label = "fsbl";
+             reg = <0x00020000 0x00040000>;
+      };
+      partition@fpga {
+             label = "fpga";
+             reg = <0x00060000 0x00400000>;
+      };
+      partition@uboot {
+             label = "uboot";
+             reg = <0x00460000 0x000C0000>;
+      };
+      partition@ubootenv {
+             label = "ubootenv";
+             reg = <0x00520000 0x00020000>;
+      };
+      partition@0x004E0000 {
+             label = "kernel";
+             reg = <0x00540000 0x00500000>;
+      };
+      partition@dtb {
+             label = "dtb";
+             reg = <0x00A40000 0x00020000>;
+      };
+      partition@rootfs {
+             label = "rootfs";
+             reg = <0x00A60000 0x00EC0000>;
+      };
+      partition@opbm {
+             label = "opbm";
+             reg = <0x01920000 0x00400000>;
+      };
+      partition@freea {
+             label = "freea";
+             reg = <0x01D20000 0x002A0000>;
+      };
+      partition@params {
+             label = "params";
+             reg = <0x01FC0000 0x00020000>;
+      };
+      partition@freeb {
+             label = "freeb";
+             reg = <0x01FE0000 0x00000000>;
+      };
+   };
+};
+/*
+&amba
+{
+    pcihost
+    {  //set the board to PCI master
+        compatible = "nai,ep430d";
+        #address-cells = <1>;
+        #size-cells = <1>;
+        interrupts = <0 36 4>;
+        interrupt-parent = <&intc>;       //double check this alias value &intc
+        ignore_slot =  /bits/ 8 <0x14>;   //0x14 = slot 2 AD[31] 0x0D = slot 9 AD[24]
+        ranges;
+        cfg_base_addr: cfg_base_addr@43c90000
+        {
+            label = "cfg_base_addr";
+            reg = <0x43c90000 0x14>;
+        };
+        core_base_addr: core_base_addr@60000000
+        {
+            label = "core_base_addr";
+            reg = <0x60000000 0x4>;
+        };
+        mb_common_addr: mb_common_addr@0x43c40000
+        {
+            label = "mb_common_addr";
+            reg = <0x43c40000 0x4>;
+        };
+    };
+};
+*/
